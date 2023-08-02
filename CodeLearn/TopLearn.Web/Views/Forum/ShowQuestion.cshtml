@@ -1,0 +1,104 @@
+﻿@using System.Security.Claims
+@using CodeLearn.Core.Convertors
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model CodeLearn.Core.DTOs.Question.ShowQuestionViewModel
+@{
+    ViewData["Title"] = "پرسش" + @Model.Question.Title;
+}
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/"> کد لرن </a></li>
+            <li class="breadcrumb-item active"><a href=""> پرسش ها </a></li>
+            <li class="breadcrumb-item active" aria-current="page"> <a asp-controller="Forum" asp-action="ShowQuestion" asp-route-id="@Model.Question.QuestionId">@Model.Question.Title</a> </li>
+        </ul>
+    </nav>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="inner">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h1>@Model.Question.Title</h1>
+                    </div>
+                    <div class="panel-body">
+                        @Html.Raw(Model.Question.Body)
+                    </div>
+                    <div class="panel-footer">
+                        <img src="~/UserAvatar/@Model.Question.User.UserAvatar" style="max-width: 50px; border-radius: 20px;" />
+                        <span class="text-muted">@Model.Question.User.UserName</span> |
+                        <span class="text-muted">@Model.Question.CreateDate.ToShamsi()</span>
+                    </div>
+                </div>
+            </div>
+            <div class="inner" style="margin-top: 25px;">
+                <h1 style="font-size: 18px;">پاسخ ها</h1>
+                <hr />
+                @foreach (var answer in Model.Answers)
+                {
+                    <div class="panel @((answer.IsTrue) ? "IsTrue" : "")">
+                        <div class="panel-heading">
+                            <img src="~/UserAvatar/@answer.User.UserAvatar" style="max-width: 40px; border-radius: 20px;" />
+                            <span class="text-muted">@answer.User.UserName</span> |
+                            <span class="text-muted">@answer.CreateDate.ToShamsi()</span>
+                        </div>
+                        <div class="panel-body">
+                            @Html.Raw(answer.BodyAnswer)
+                            @if (User.Identity.IsAuthenticated && Model.Question.UserId == int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier.ToString())))
+                            {
+                                <a asp-action="SelectTrueAnswer" asp-route-questionId="@Model.Question.QuestionId" asp-route-answerId="@answer.AnswerId" class="btn btn-success pull-left">
+                                    پاسخ صحیح
+                                    <i class="fa fa-check" aria-hidden="true"></i>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <div class="inner" style="margin-top: 25px;">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h1 style="font-size: 18px;" class="text-muted">افزودن پاسخ جدید</h1>
+                        </div>
+                        <div class="panel-body">
+                            <form asp-action="Answer">
+                                <input type="hidden" name="id" value="@Model.Question.QuestionId" />
+                                <div class="form-group">
+                                    <textarea name="body"></textarea>
+                                    <button type="submit" class="btn btn-block btn-success" style="margin-top: 20px; height: 50px; font-size: 15px;">ثبت پاسخ شما</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-danger">
+                    برای پاسخ به این سوال باید وارد حساب خود شوید.
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script src="https://cdn.ckeditor.com/4.9.2/standard/ckeditor.js"></script>
+    <script>
+
+        CKEDITOR.replace('body', {
+            customConfig: '/js/Config.js'
+        });
+
+    </script>
+}

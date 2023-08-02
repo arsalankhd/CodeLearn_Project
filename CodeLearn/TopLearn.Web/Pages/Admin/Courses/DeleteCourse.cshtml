@@ -1,0 +1,33 @@
+﻿@page "{id}"
+@model CodeLearn.Web.Pages.Admin.Courses.DeleteCourseModel
+@{
+    ViewData["Title"] = "حذف دوره";
+}
+
+<div class="col-md-12">
+    <div class="panel">
+        <div class="panel-heading">
+            <h2>حذف دوره</h2>
+            <hr />
+        </div>
+        <div class="panel-body">
+            <form method="post">
+                <input type="hidden" name="courseId" value="@ViewData["CourseId"].ToString()" />
+                <dl class="dl-horizontal">
+                    <dt>تصویر دوره :</dt>
+                    <dd>
+                        <img src="/course/thumb/@Model.Course.CourseImageName" />
+                    </dd>
+                    <dt>عنوان دوره :</dt>
+                    <dd>@Model.Course.CourseTitle</dd>
+                    <dt>تعداد جلسات :</dt>
+                    <dd>@Model.Course.EpisodeCount</dd>
+                    <dt></dt>
+                    <dd>
+                        <input type="submit" value="حذف" class="btn btn-danger" />
+                    </dd>
+                </dl>
+            </form>
+        </div>
+    </div>
+</div>

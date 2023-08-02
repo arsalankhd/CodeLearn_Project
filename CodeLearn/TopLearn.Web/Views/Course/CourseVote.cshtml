@@ -1,0 +1,23 @@
+﻿<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+@model Tuple<int,int>
+@if (User.Identity.IsAuthenticated && ViewBag.NotAccess == null)
+{
+    <div class="row">
+        <h2>رای دهی به دوره</h2>
+        <img src="/images/vote.jpg" />
+        <p></p>
+        <p>
+            <a class="btn btn-success" onclick="Vote(true)">
+                <i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                میپسندم (@Model.Item1)
+            </a>
+            <a class="btn btn-danger" onclick="Vote(false)">
+                <i class="fa fa-thumbs-down" aria-hidden="true"></i>
+                نمی‌پسندم (@Model.Item2)
+            </a>
+        </p>
+    </div>
+}

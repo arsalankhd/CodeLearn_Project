@@ -1,0 +1,76 @@
+﻿@page "{handler?}"
+@model CodeLearn.Web.Pages.Admin.Discount.CreateDiscountModel
+@{
+    ViewData["Title"] = "افزودن کد تخفیف";
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">افزودن کد تخفیف جدید</h1>
+    </div>
+</div>
+
+<div class="row">
+    <form method="post">
+        <div class="col-md-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    کد تخفیف جدید
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label>کد تخفیف</label>
+                        <input type="text" asp-for="Discount.DiscountCode" class="form-control" />
+                        <div id="alertCode" class="alert alert-danger" style="display: none; margin-top: 5px">
+                            <p class="text-muted">کد وارد شده معتبر نمی باشد</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>درصد</label>
+                        <input type="number" asp-for="Discount.DiscountPercent" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>تعداد</label>
+                        <input type="number" asp-for="Discount.UsableCount" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>تاریخ شروع</label>
+                        <input id="stDate" name="stDate" />
+                    </div>
+                    <div class="form-group">
+                        <label>تاریخ پایان</label>
+                        <input id="edDate" name="edDate" />
+                    </div>
+                    <input type="submit" value="ذخیره اطلاعات" class="btn btn-success" />
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts{
+    <script>
+        $("#Discount_DiscountCode").blur(function() {
+
+            $.ajax({
+                type: "get",
+                url: "/Admin/Discount/CreateDiscount/CheckCode?code=" + $("#Discount_DiscountCode").val()
+            }).done(function(res) {
+                if (res === 'True') {
+                    $("#alertCode").show();
+                } else {
+                    $("#alertCode").hide();
+                }
+            });
+
+        });
+    </script>
+    <script src="/js/jquery-1.9.1.min.js"></script>
+    <script src="/js/JalaliDate.js"></script>
+    <script src="/js/kendo.web.js"></script>
+    <script src="/js/fa-IR.js"></script>
+    <script>
+        $("#stDate").kendoDatePicker();
+        $("#edDate").kendoDatePicker();
+    </script>
+}

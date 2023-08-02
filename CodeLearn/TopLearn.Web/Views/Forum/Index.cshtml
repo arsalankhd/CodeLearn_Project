@@ -1,0 +1,79 @@
+﻿@using CodeLearn.Core.Convertors
+@using CodeLearn.Core.Services.Interfaces
+@model IEnumerable<CodeLearn.DataLayer.Entities.Question.Question>
+@inject ICourseService _CourseService;
+@inject IOrderService _OrderService;
+@{
+    ViewData["Title"] = "انجمن";
+}
+
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/"> کد لرن </a></li>
+            <li class="breadcrumb-item active"><a asp-controller="Forum" asp-action="Index"> انجمن </a></li>
+        </ul>
+    </nav>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="term-categories">
+                <div class="top-bar">
+                    <header>
+                        <h1> جستجوی پرسش ها </h1> <span> @Model.Count()  پرسش </span>
+                    </header>
+                    <div class="row">
+                        <div class="col-md-4 col-sm-12 col-xs-12 pull-right">
+                            <div class="input">
+                                <form asp-action="Index" class="form-inline" method="get">
+                                    <input type="hidden" name="courseId" value="@ViewBag.CourseId" />
+                                    <input type="text" name="filter" placeholder="عبارت مورد نظر ..." class="form-control" />
+                                    <button><i class="zmdi zmdi-search"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-12 col-xs-12 pull-left">
+                            <div class="input">
+                                @if (@ViewBag.CourseId != null)
+                                {
+                                    var course = _CourseService.GetCourseById((int)ViewBag.CourseId);
+                                    if (User.Identity.IsAuthenticated)
+                                    {
+                                        if (course.CoursePrice == 0 || _OrderService.IsUserInCourse(User.Identity.Name, (int)ViewBag.CourseId))
+                                        {
+                                            <a asp-controller="Forum" asp-action="CreateQuestion" asp-route-id="@ViewBag.CourseId" class="btn btn-success pull-left">ایجاد پرسش جدید</a>
+                                        }
+                                        else
+                                        {
+                                            <div class="alert alert-danger">برای ایجاد پرسش جدید باید این دوره را خریداری کنید!</div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div class="alert alert-danger">برای ایجاد پرسش جدید باید وارد سایت شوید</div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                @foreach (var item in Model)
+                {
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h1><a asp-controller="Forum" asp-action="ShowQuestion" asp-route-id="@item.QuestionId">@item.Title</a></h1>
+                        </div>
+                        <div class="panel-footer">
+                            <span class="text-muted"><a asp-controller="Course" asp-action="ShowCourse" asp-route-id="@item.Course.CourseId">@item.Course.CourseTitle</a></span> |
+                            <span class="text-muted">@item.User.UserName</span> |
+                            <span class="text-muted">@item.CreateDate.ToShamsi()</span>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
